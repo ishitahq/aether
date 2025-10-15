@@ -16,7 +16,7 @@ export default function MapPage() {
   const [tempFilter, setTempFilter] = useState<string>('all');
 
   useEffect(() => {
-    let filtered = mockLandsatData.filter(location => {
+    const filtered = mockLandsatData.filter(location => {
       const matchesSearch = location.location.toLowerCase().includes(searchTerm.toLowerCase()) ||
         location.metadata.tempRange.toLowerCase().includes(searchTerm.toLowerCase()) ||
         location.metadata.satellite.toLowerCase().includes(searchTerm.toLowerCase());
