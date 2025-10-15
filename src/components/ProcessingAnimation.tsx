@@ -34,7 +34,9 @@ const ProcessingAnimation = ({ isProcessing, progress = 0, message = 'Processing
       exit={{ opacity: 0, scale: 0.8 }}
       className="fixed inset-0 z-50 flex items-center justify-center modal-backdrop"
     >
-      <div className="glass-morphism-dark rounded-3xl p-8 max-w-md mx-4 text-center">
+      {/* Blurred dark backdrop */}
+      <div className="absolute inset-0 bg-black/40 backdrop-blur-md" />
+      <div className="glass-morphism-dark rounded-3xl p-8 max-w-md mx-4 text-center relative">
         {/* Main Processing Ring */}
         <div className="relative mx-auto mb-6">
           <div className="w-32 h-32 mx-auto">
@@ -163,7 +165,7 @@ const ProcessingAnimation = ({ isProcessing, progress = 0, message = 'Processing
         </div>
 
         {/* Hexagon Pattern Background */}
-        <div className="absolute inset-0 hexagon-overlay opacity-5"></div>
+        <div className="absolute inset-0 hexagon-overlay opacity-5 pointer-events-none"></div>
       </div>
     </motion.div>
   );

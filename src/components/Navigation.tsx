@@ -37,7 +37,7 @@ const Navigation = () => {
               </div>
               <div>
                 <h1 className="text-xl font-bold text-gradient">Aether</h1>
-                <p className="text-xs text-slate-400">Thermal Imaging Platform</p>
+                <p className="text-xs text-slate-400">Imaging Platform</p>
               </div>
             </motion.div>
 

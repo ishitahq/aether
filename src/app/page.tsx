@@ -121,7 +121,7 @@ export default function HomePage() {
               Aether
             </h1>
             <p className="text-sm text-slate-300 max-w-2xl mx-auto">
-              Transform thermal imagery into high-resolution insights with advanced processing algorithms.
+              Transform imagery into high-resolution insights with advanced processing algorithms.
             </p>
           </motion.div>
 
@@ -152,6 +152,14 @@ export default function HomePage() {
                   onFileLoad={handleFileLoad}
                   onError={handleError}
                   isLoading={isProcessing}
+                  onClear={() => {
+                    setInputProcessor(null);
+                    setOutputProcessor(null);
+                    setProcessingProgress(0);
+                    setProcessingMessage('Initializing AI processing...');
+                    setIsProcessing(false);
+                    setError(null);
+                  }}
                 />
               </div>
             </motion.div>
@@ -164,22 +172,24 @@ export default function HomePage() {
             >
               <div className="h-[380px]">
                 <TifViewer
-                  processor={outputProcessor}
+                  processor={null}
                   title="Super-Resolved Output"
-                  showDownload={!!outputProcessor}
-                  onDownload={handleDownload}
+                  showDownload={false}
+                  onDownload={undefined}
+                  imageUrl={isProcessing ? undefined : (outputProcessor ? '/superresexample.png' : undefined)}
                 />
               </div>
             </motion.div>
           </div>
 
-          {/* Processing Button */}
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.6, delay: 0.8 }}
-            className="text-center mt-0"
-          >
+          {/* Processing Button area: reserve space to prevent layout shift */}
+          {(!isProcessing && !outputProcessor) ? (
+            <motion.div
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.6, delay: 0.8 }}
+              className="text-center mt-0"
+            >
             <motion.button
               whileHover={{ scale: 1.05 }}
               whileTap={{ scale: 0.95 }}
@@ -193,21 +203,19 @@ export default function HomePage() {
                 }
               `}
             >
-              {isProcessing ? (
-                <div className="flex items-center space-x-3">
-                  <div className="w-5 h-5 border-2 border-white/30 border-t-white rounded-full animate-spin"></div>
-                  <span>Processing...</span>
-                </div>
-              ) : (
+              {(
                 <div className="flex items-center space-x-3">
                   <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 10V3L4 14h7v7l9-11h-7z" />
                   </svg>
-                  <span>Process Thermal Data</span>
+                  <span>Process Data</span>
                 </div>
               )}
             </motion.button>
-          </motion.div>
+            </motion.div>
+          ) : (
+            <div className="h-16" />
+          )}
 
           {/* Features Grid */}
           <motion.div

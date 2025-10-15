@@ -9,9 +9,10 @@ interface TifUploaderProps {
   onFileLoad: (processor: TifProcessor) => void;
   onError: (error: string) => void;
   isLoading?: boolean;
+  onClear?: () => void;
 }
 
-const TifUploader = ({ onFileLoad, onError, isLoading = false }: TifUploaderProps) => {
+const TifUploader = ({ onFileLoad, onError, isLoading = false, onClear }: TifUploaderProps) => {
   const [isDragOver, setIsDragOver] = useState(false);
   const [selectedFile, setSelectedFile] = useState<File | null>(null);
   const fileInputRef = useRef<HTMLInputElement>(null);
@@ -66,7 +67,8 @@ const TifUploader = ({ onFileLoad, onError, isLoading = false }: TifUploaderProp
     if (fileInputRef.current) {
       fileInputRef.current.value = '';
     }
-  }, []);
+    onClear?.();
+  }, [onClear]);
 
   return (
     <motion.div
@@ -76,7 +78,7 @@ const TifUploader = ({ onFileLoad, onError, isLoading = false }: TifUploaderProp
       className="glass-card-dark h-full"
     >
       <div className="flex items-center justify-between mb-4">
-        <h3 className="text-lg font-semibold text-slate-100">Upload Thermal Image</h3>
+        <h3 className="text-lg font-semibold text-slate-100">Upload Image</h3>
         <div className="flex items-center space-x-2">
           <div className="w-2 h-2 bg-blue-400 rounded-full animate-pulse"></div>
           <span className="text-sm text-slate-400">Ready</span>
@@ -99,7 +101,7 @@ const TifUploader = ({ onFileLoad, onError, isLoading = false }: TifUploaderProp
                     <DocumentIcon className="w-6 h-6 text-white" />
                   </div>
                   <div>
-                    <p className="font-medium text-slate-100">{selectedFile.name}</p>
+                    <p className="font-medium text-slate-100">{selectedFile.name.length > 20 ? `${selectedFile.name.slice(0, 17)}...` : selectedFile.name}</p>
                     <p className="text-sm text-slate-400">
                       {(selectedFile.size / (1024 * 1024)).toFixed(2)} MB
                     </p>
@@ -116,21 +118,7 @@ const TifUploader = ({ onFileLoad, onError, isLoading = false }: TifUploaderProp
               </div>
             </div>
 
-            {/* Processing Status */}
-            <motion.div
-              initial={{ opacity: 0 }}
-              animate={{ opacity: 1 }}
-              transition={{ delay: 0.2 }}
-              className="glass-morphism-dark rounded-xl p-4"
-            >
-              <div className="flex items-center space-x-3">
-                <div className="processing-ring"></div>
-                <div>
-                  <p className="font-medium text-slate-100">Processing TIF Data</p>
-                  <p className="text-sm text-slate-400">Extracting thermal information...</p>
-                </div>
-              </div>
-            </motion.div>
+            {/* Processing Status removed as requested */}
           </motion.div>
         ) : (
           <motion.div
@@ -166,7 +154,7 @@ const TifUploader = ({ onFileLoad, onError, isLoading = false }: TifUploaderProp
                 
                 <div>
                   <h4 className="text-lg font-semibold text-slate-100 mb-2">
-                    {isDragOver ? 'Drop TIF file here' : 'Upload Thermal Image'}
+                  {isDragOver ? 'Drop TIF file here' : 'Upload Image'}
                   </h4>
                   <p className="text-slate-400 mb-4">
                     Drag and drop your TIF file or click to browse

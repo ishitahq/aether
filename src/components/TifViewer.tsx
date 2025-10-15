@@ -11,6 +11,7 @@ interface TifViewerProps {
   showDownload?: boolean;
   onDownload?: () => void;
   className?: string;
+  imageUrl?: string; // optional direct image to render
 }
 
 const TifViewer = ({ 
@@ -18,7 +19,8 @@ const TifViewer = ({
   title, 
   showDownload = false, 
   onDownload,
-  className = '' 
+  className = '',
+  imageUrl
 }: TifViewerProps) => {
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const containerRef = useRef<HTMLDivElement>(null);
@@ -34,6 +36,33 @@ const TifViewer = ({
       renderTif();
     }
   }, [processor]);
+
+  useEffect(() => {
+    if (!imageUrl || !canvasRef.current) return;
+    const img = new Image();
+    img.onload = () => {
+      const canvas = canvasRef.current!;
+      canvas.width = img.width;
+      canvas.height = img.height;
+      const ctx = canvas.getContext('2d');
+      if (!ctx) return;
+      ctx.clearRect(0, 0, canvas.width, canvas.height);
+      ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
+      // Display the provided image, but show fixed metadata values as requested
+      setMetadata({
+        width: 264,
+        height: 264,
+        bands: 11,
+        bounds: {
+          east: -114.5199,
+          west: -114.427,
+          north: 41.604,
+          south: 41.535,
+        },
+      });
+    };
+    img.src = imageUrl;
+  }, [imageUrl]);
 
   const renderTif = async () => {
     if (!processor || !canvasRef.current) return;
@@ -82,7 +111,7 @@ const TifViewer = ({
       </div>
 
       <AnimatePresence>
-        {processor && metadata ? (
+        {(imageUrl || (processor && metadata)) ? (
           <motion.div
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
@@ -148,85 +177,84 @@ const TifViewer = ({
               </div>
             </div>
 
-            {/* Image Container */}
-            <div 
-              ref={containerRef}
-              className={`
-                relative glass-morphism-dark rounded-xl overflow-hidden
-                ${isFullscreen ? 'fixed inset-4 z-50' : ''}
-              `}
-            >
-              <div className="relative">
-                <canvas
-                  ref={canvasRef}
-                  className="w-full h-auto max-h-96 object-contain"
-                  style={{
-                    transform: `scale(${zoom})`,
-                    transformOrigin: 'center',
-                    transition: 'transform 0.3s ease'
-                  }}
-                />
-                
-                {/* Loading Overlay */}
-                <AnimatePresence>
-                  {isRendering && (
-                    <motion.div
-                      initial={{ opacity: 0 }}
-                      animate={{ opacity: 1 }}
-                      exit={{ opacity: 0 }}
-                      className="absolute inset-0 bg-black/50 backdrop-blur-sm flex items-center justify-center"
-                    >
-                      <div className="text-center">
-                        <div className="processing-ring mx-auto mb-4"></div>
-                        <p className="text-white font-medium">Rendering Thermal Data...</p>
-                      </div>
-                    </motion.div>
-                  )}
-                </AnimatePresence>
+            {/* Image + Metadata Sidebar */}
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+              {/* Image Container */}
+              <div
+                ref={containerRef}
+                className={`
+                  relative glass-morphism-dark rounded-xl overflow-hidden md:col-span-2
+                  ${isFullscreen ? 'fixed inset-4 z-50' : ''}
+                `}
+              >
+                <div className="relative">
+                  <canvas
+                    ref={canvasRef}
+                    className="w-full h-auto max-h-96 object-contain"
+                    style={{
+                      transform: `scale(${zoom})`,
+                      transformOrigin: 'center',
+                      transition: 'transform 0.3s ease'
+                    }}
+                  />
 
-                {/* Temperature Scale */}
-                <div className="absolute bottom-4 right-4 glass-morphism-dark rounded-lg p-3">
-                  <div className="flex items-center space-x-2">
-                    <div className="w-4 h-4 bg-gradient-to-t from-blue-500 to-red-500 rounded"></div>
-                    <span className="text-xs text-slate-300">Temperature Scale</span>
+                  {/* Loading Overlay */}
+                  <AnimatePresence>
+                    {isRendering && (
+                      <motion.div
+                        initial={{ opacity: 0 }}
+                        animate={{ opacity: 1 }}
+                        exit={{ opacity: 0 }}
+                        className="absolute inset-0 bg-black/50 backdrop-blur-sm flex items-center justify-center"
+                      >
+                        <div className="text-center">
+                          <div className="processing-ring mx-auto mb-4"></div>
+                          <p className="text-white font-medium">Rendering Thermal Data...</p>
+                        </div>
+                      </motion.div>
+                    )}
+                  </AnimatePresence>
+
+                  {/* Temperature Scale removed as requested */}
+                </div>
+              </div>
+
+              {/* Metadata Sidebar */}
+              {metadata && (
+                <div className="glass-morphism-dark rounded-xl p-4">
+                  <h5 className="text-sm font-medium text-slate-100 mb-3">Image Properties</h5>
+                  <div className="space-y-3 text-sm">
+                    <div>
+                      <div className="text-slate-400">Dimensions</div>
+                      <div className="text-slate-200">{metadata.width} × {metadata.height}</div>
+                    </div>
+                    <div>
+                      <div className="text-slate-400">Bands</div>
+                      <div className="text-slate-200">{metadata.bands}</div>
+                    </div>
+                    {metadata.bounds && (
+                      <div className="space-y-2">
+                        <div>
+                          <div className="text-slate-400">North</div>
+                          <div className="text-slate-200">{metadata.bounds.north.toFixed(4)}°</div>
+                        </div>
+                        <div>
+                          <div className="text-slate-400">South</div>
+                          <div className="text-slate-200">{metadata.bounds.south.toFixed(4)}°</div>
+                        </div>
+                        <div>
+                          <div className="text-slate-400">East</div>
+                          <div className="text-slate-200">{metadata.bounds.east.toFixed(4)}°</div>
+                        </div>
+                        <div>
+                          <div className="text-slate-400">West</div>
+                          <div className="text-slate-200">{metadata.bounds.west.toFixed(4)}°</div>
+                        </div>
+                      </div>
+                    )}
                   </div>
                 </div>
-              </div>
-            </div>
-
-            {/* Metadata */}
-            <div className="glass-morphism-dark rounded-xl p-4">
-              <h5 className="font-medium text-slate-100 mb-3">Image Information</h5>
-              <div className="grid grid-cols-2 gap-4 text-sm">
-                <div>
-                  <span className="text-slate-400">Dimensions:</span>
-                  <span className="text-slate-200 ml-2">{metadata.width} × {metadata.height}</span>
-                </div>
-                <div>
-                  <span className="text-slate-400">Bands:</span>
-                  <span className="text-slate-200 ml-2">{metadata.bands}</span>
-                </div>
-                {metadata.bounds && (
-                  <>
-                    <div>
-                      <span className="text-slate-400">North:</span>
-                      <span className="text-slate-200 ml-2">{metadata.bounds.north.toFixed(4)}°</span>
-                    </div>
-                    <div>
-                      <span className="text-slate-400">South:</span>
-                      <span className="text-slate-200 ml-2">{metadata.bounds.south.toFixed(4)}°</span>
-                    </div>
-                    <div>
-                      <span className="text-slate-400">East:</span>
-                      <span className="text-slate-200 ml-2">{metadata.bounds.east.toFixed(4)}°</span>
-                    </div>
-                    <div>
-                      <span className="text-slate-400">West:</span>
-                      <span className="text-slate-200 ml-2">{metadata.bounds.west.toFixed(4)}°</span>
-                    </div>
-                  </>
-                )}
-              </div>
+              )}
             </div>
           </motion.div>
         ) : (
@@ -240,7 +268,7 @@ const TifViewer = ({
                 <MagnifyingGlassIcon className="w-8 h-8 text-slate-500" />
               </div>
               <p className="text-slate-400">No image loaded</p>
-              <p className="text-sm text-slate-500 mt-1">Upload a TIF file to view thermal data</p>
+              <p className="text-sm text-slate-500 mt-1">Upload a TIF file to view data</p>
             </div>
           </motion.div>
         )}
