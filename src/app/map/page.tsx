@@ -12,14 +12,40 @@ export default function MapPage() {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [searchTerm, setSearchTerm] = useState('');
   const [filteredData, setFilteredData] = useState<LandsatImage[]>(mockLandsatData);
+  const [sortBy, setSortBy] = useState<'location' | 'date' | 'temp'>('location');
+  const [tempFilter, setTempFilter] = useState<string>('all');
 
   useEffect(() => {
-    const filtered = mockLandsatData.filter(location =>
-      location.location.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      location.metadata.tempRange.toLowerCase().includes(searchTerm.toLowerCase())
-    );
+    let filtered = mockLandsatData.filter(location => {
+      const matchesSearch = location.location.toLowerCase().includes(searchTerm.toLowerCase()) ||
+        location.metadata.tempRange.toLowerCase().includes(searchTerm.toLowerCase()) ||
+        location.metadata.satellite.toLowerCase().includes(searchTerm.toLowerCase());
+      
+      const matchesTemp = tempFilter === 'all' || 
+        (tempFilter === 'cold' && location.metadata.tempRange.includes('-')) ||
+        (tempFilter === 'hot' && parseInt(location.metadata.tempRange.split('-')[1]) > 30);
+      
+      return matchesSearch && matchesTemp;
+    });
+
+    // Sort the filtered data
+    filtered.sort((a, b) => {
+      switch (sortBy) {
+        case 'location':
+          return a.location.localeCompare(b.location);
+        case 'date':
+          return new Date(b.acquisitionDate).getTime() - new Date(a.acquisitionDate).getTime();
+        case 'temp':
+          const tempA = parseInt(a.metadata.tempRange.split('-')[1]);
+          const tempB = parseInt(b.metadata.tempRange.split('-')[1]);
+          return tempB - tempA;
+        default:
+          return 0;
+      }
+    });
+
     setFilteredData(filtered);
-  }, [searchTerm]);
+  }, [searchTerm, sortBy, tempFilter]);
 
   const handleMarkerClick = (image: LandsatImage) => {
     setSelectedImage(image);
@@ -113,7 +139,7 @@ export default function MapPage() {
                 </h2>
                 
                 {/* Search Filter */}
-                <div className="mb-4">
+                <div className="mb-4 space-y-3">
                   <input
                     type="text"
                     placeholder="Search locations..."
@@ -121,6 +147,29 @@ export default function MapPage() {
                     onChange={(e) => setSearchTerm(e.target.value)}
                     className="w-full px-3 py-2 bg-slate-800 border border-slate-600 rounded-lg text-slate-100 placeholder-slate-400 focus:outline-none focus:border-blue-500"
                   />
+                  
+                  {/* Sort Options */}
+                  <div className="flex space-x-2">
+                    <select
+                      value={sortBy}
+                      onChange={(e) => setSortBy(e.target.value as 'location' | 'date' | 'temp')}
+                      className="flex-1 px-3 py-2 bg-slate-800 border border-slate-600 rounded-lg text-slate-100 focus:outline-none focus:border-blue-500"
+                    >
+                      <option value="location">Sort by Location</option>
+                      <option value="date">Sort by Date</option>
+                      <option value="temp">Sort by Temperature</option>
+                    </select>
+                    
+                    <select
+                      value={tempFilter}
+                      onChange={(e) => setTempFilter(e.target.value)}
+                      className="flex-1 px-3 py-2 bg-slate-800 border border-slate-600 rounded-lg text-slate-100 focus:outline-none focus:border-blue-500"
+                    >
+                      <option value="all">All Temperatures</option>
+                      <option value="cold">Cold Regions</option>
+                      <option value="hot">Hot Regions</option>
+                    </select>
+                  </div>
                 </div>
                 
                 <div className="space-y-3 max-h-[50vh] overflow-y-auto">

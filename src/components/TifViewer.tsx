@@ -239,7 +239,7 @@ const TifViewer = ({
               <div className="w-16 h-16 bg-slate-800 rounded-2xl flex items-center justify-center mx-auto mb-4">
                 <MagnifyingGlassIcon className="w-8 h-8 text-slate-500" />
               </div>
-              <p className="text-slate-400">No thermal image loaded</p>
+              <p className="text-slate-400">No image loaded</p>
               <p className="text-sm text-slate-500 mt-1">Upload a TIF file to view thermal data</p>
             </div>
           </motion.div>

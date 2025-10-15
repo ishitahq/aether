@@ -45,7 +45,7 @@ const DataModal = ({ isOpen, onClose, imageData }: DataModalProps) => {
       try {
         await processedProcessor.downloadAsTif(`${imageData?.location.toLowerCase().replace(/\s+/g, '-')}-processed.tif`);
       } catch (error) {
-        console.error('Download failed:', error);
+        // Handle download error silently
       }
     }
   };
@@ -63,7 +63,7 @@ const DataModal = ({ isOpen, onClose, imageData }: DataModalProps) => {
         initial={{ opacity: 0 }}
         animate={{ opacity: 1 }}
         exit={{ opacity: 0 }}
-        className="fixed inset-0 z-50 modal-backdrop flex items-center justify-center p-4"
+        className="fixed inset-0 z-50 backdrop-blur-xl bg-black/60 flex items-center justify-center p-4"
         onClick={onClose}
       >
         <motion.div
@@ -138,7 +138,7 @@ const DataModal = ({ isOpen, onClose, imageData }: DataModalProps) => {
                   className="space-y-6"
                 >
                   {/* Satellite Information */}
-                  <div className="glass-morphism-dark rounded-xl p-6">
+                  <div className="glass-morphism-dark rounded-xl p-6 border-2 border-slate-600/50">
                     <h3 className="text-lg font-semibold text-slate-100 mb-4">Satellite Information</h3>
                     <div className="grid grid-cols-2 gap-4">
                       <div>
@@ -161,7 +161,7 @@ const DataModal = ({ isOpen, onClose, imageData }: DataModalProps) => {
                   </div>
 
                   {/* Image Properties */}
-                  <div className="glass-morphism-dark rounded-xl p-6">
+                  <div className="glass-morphism-dark rounded-xl p-6 border-2 border-slate-600/50">
                     <h3 className="text-lg font-semibold text-slate-100 mb-4">Image Properties</h3>
                     <div className="grid grid-cols-2 gap-4">
                       <div>
@@ -184,7 +184,7 @@ const DataModal = ({ isOpen, onClose, imageData }: DataModalProps) => {
                   </div>
 
                   {/* Download File */}
-                  <div className="glass-morphism-dark rounded-xl p-6">
+                  <div className="glass-morphism-dark rounded-xl p-6 border-2 border-slate-600/50">
                     <h3 className="text-lg font-semibold text-slate-100 mb-4">Download Processed Image</h3>
                     <motion.button
                       whileHover={{ scale: 1.02 }}

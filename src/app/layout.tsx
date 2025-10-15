@@ -1,15 +1,16 @@
 import type { Metadata } from "next";
 import { Inter } from "next/font/google";
+import 'leaflet/dist/leaflet.css';
 import "./globals.css";
 import { ThemeProvider } from "@/lib/theme";
 
 const inter = Inter({ subsets: ["latin"] });
 
 export const metadata: Metadata = {
-  title: "Aether - Thermal Imaging Platform",
-  description: "Thermal image processing and analysis platform.",
+  title: "Aether - Thermal Image Enhancer",
+  description: "Enhancing thermal maps with optical details.",
   keywords: "thermal imaging, satellite imagery, thermal analysis",
-  authors: [{ name: "Aether Team" }],
+  authors: [{ name: "SIH - DJSW041" }],
 };
 
 export const viewport = {
@@ -23,7 +24,7 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="en" className="dark">
+    <html lang="en">
       <head>
         <link rel="preconnect" href="https://fonts.googleapis.com" />
         <link rel="preconnect" href="https://fonts.gstatic.com" crossOrigin="anonymous" />
