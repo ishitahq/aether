@@ -174,6 +174,9 @@ const TifUploader = ({ onFileLoad, onError, isLoading = false }: TifUploaderProp
                   <p className="text-sm text-slate-500">
                     Supports .tif files only
                   </p>
+                  <p className="text-sm text-slate-500 mt-1">
+                    Maximum file size: 100MB
+                  </p>
                 </div>
               </motion.div>
 
@@ -190,15 +193,7 @@ const TifUploader = ({ onFileLoad, onError, isLoading = false }: TifUploaderProp
               className="hidden"
             />
 
-            {/* Instructions */}
-            <div className="glass-morphism-dark rounded-xl p-4">
-              <h5 className="font-medium text-slate-100 mb-2">Supported Formats</h5>
-              <ul className="text-sm text-slate-400 space-y-1">
-                <li>• TIF files only</li>
-                <li>• Thermal infrared data</li>
-                <li>• Maximum file size: 100MB</li>
-              </ul>
-            </div>
+            {/* Instructions removed as per requirement */}
           </motion.div>
         )}
       </AnimatePresence>

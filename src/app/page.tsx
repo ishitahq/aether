@@ -73,7 +73,7 @@ export default function HomePage() {
   };
 
   return (
-    <div className="min-h-screen relative overflow-hidden pt-24">
+    <div className="h-[840px] relative overflow-hidden pt-24">
       {/* Dynamic Background */}
       <div className="dynamic-bg"></div>
       
@@ -108,19 +108,19 @@ export default function HomePage() {
       <Navigation />
 
       {/* Main Content */}
-      <main className="relative z-10 pt-24 pb-8 px-4">
+      <main className="relative z-10 pt-4 pb-2 px-4">
         <div className="max-w-7xl mx-auto">
           {/* Header */}
           <motion.div
             initial={{ opacity: 0, y: 30 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.8, delay: 0.2 }}
-            className="text-center mb-12"
+            className="text-center mb-4"
           >
-            <h1 className="text-5xl font-bold text-gradient mb-4">
+            <h1 className="text-4xl font-bold text-gradient mb-1">
               Aether
             </h1>
-            <p className="text-xl text-slate-300 max-w-2xl mx-auto">
+            <p className="text-sm text-slate-300 max-w-2xl mx-auto">
               Transform thermal imagery into high-resolution insights with advanced processing algorithms.
             </p>
           </motion.div>
@@ -140,18 +140,20 @@ export default function HomePage() {
           </AnimatePresence>
 
           {/* Main Processing Interface */}
-          <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 mb-8">
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 mb-2">
             {/* Input Section */}
             <motion.div
               initial={{ opacity: 0, x: -30 }}
               animate={{ opacity: 1, x: 0 }}
               transition={{ duration: 0.6, delay: 0.4 }}
             >
-              <TifUploader
-                onFileLoad={handleFileLoad}
-                onError={handleError}
-                isLoading={isProcessing}
-              />
+              <div className="h-[380px]">
+                <TifUploader
+                  onFileLoad={handleFileLoad}
+                  onError={handleError}
+                  isLoading={isProcessing}
+                />
+              </div>
             </motion.div>
 
             {/* Output Section */}
@@ -160,12 +162,14 @@ export default function HomePage() {
               animate={{ opacity: 1, x: 0 }}
               transition={{ duration: 0.6, delay: 0.6 }}
             >
-              <TifViewer
-                processor={outputProcessor}
-                title="Super-Resolved Output"
-                showDownload={!!outputProcessor}
-                onDownload={handleDownload}
-              />
+              <div className="h-[380px]">
+                <TifViewer
+                  processor={outputProcessor}
+                  title="Super-Resolved Output"
+                  showDownload={!!outputProcessor}
+                  onDownload={handleDownload}
+                />
+              </div>
             </motion.div>
           </div>
 
@@ -174,7 +178,7 @@ export default function HomePage() {
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.6, delay: 0.8 }}
-            className="text-center"
+            className="text-center mt-0"
           >
             <motion.button
               whileHover={{ scale: 1.05 }}
@@ -210,7 +214,7 @@ export default function HomePage() {
             initial={{ opacity: 0, y: 30 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.8, delay: 1.0 }}
-            className="mt-16 grid grid-cols-1 md:grid-cols-3 gap-6"
+            className="mt-4 grid grid-cols-1 md:grid-cols-3 gap-3"
           >
             {[
               {
@@ -247,11 +251,11 @@ export default function HomePage() {
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ duration: 0.6, delay: 1.2 + index * 0.1 }}
                 whileHover={{ y: -5 }}
-                className="glass-card-dark text-center"
+                className="glass-card-dark text-center p-4"
               >
                 <div className="flex justify-center mb-4">{feature.icon}</div>
-                <h3 className="text-lg font-semibold text-slate-100 mb-2">{feature.title}</h3>
-                <p className="text-slate-400 text-sm">{feature.description}</p>
+                <h3 className="text-base font-semibold text-slate-100 mb-1">{feature.title}</h3>
+                <p className="text-slate-400 text-xs">{feature.description}</p>
               </motion.div>
             ))}
           </motion.div>
